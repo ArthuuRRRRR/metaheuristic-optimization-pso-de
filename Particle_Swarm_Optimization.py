@@ -7,7 +7,6 @@ class pso:
         self.max_iter = max_iter
         self.min_iter = min_iter
         self.bornes = bornes
-        #self.fonction_objectives = fonction_objectives
 
         self.positions = np.array([[np.random.uniform(low, high) for (low, high) in bornes]for _ in range(nbr_particules)])
 
