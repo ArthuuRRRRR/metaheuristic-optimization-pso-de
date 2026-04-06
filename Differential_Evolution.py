@@ -10,6 +10,8 @@ class de:
         self.bornes = bornes
         self.facteur_diff = facteur_diff
         self.taux_croisement = taux_croisement
+        self.best_score = float("inf")
+        self.best_solution = None
 
         self.population = np.array([[np.random.uniform(low, high) for (low, high) in bornes]for _ in range(taille_population)])
 
@@ -37,17 +39,50 @@ class de:
 
         return vect_mutant_borne
 
-    def selection(self, i):
-        result = penaliser_algo(self.population[i])
+    def selection(self, i, candidat):
+        result_cible = penaliser_algo(self.population[i])
+        result_candidat = penaliser_algo(candidat)
+        if result_candidat <= result_cible:
+            self.population[i] = candidat
+            return result_candidat
+        else:
+            return result_cible
 
-    def update_best():
-        pass
+    def update_best(self):
+        for i in range(self.taille_population):
+            score = penaliser_algo(self.population[i])
+            if score < self.best_score:
+                self.best_score = score
+                self.best_solution = self.population[i].copy()
 
-    def croisement():
-        pass
+    def croisement(self, cible, mutant):
+        candidat = np.copy(cible)
+        j_random = np.random.randint(self.nbr_dim)
+        for j in range(self.nbr_dim):
+            if np.random.rand() < self.taux_croisement or j == j_random:
+                candidat[j] = mutant[j]
+        candidat= self.gerer_bornes(candidat)
+        return candidat
+        
 
     def run(self) :
         compteur_sans_amelioration = 0
         historique = []
         for iteration in range(self.max_iter):
-            pass
+            ancien_best_score = self.best_score
+            for i in range(self.taille_population):
+                cible = self.population[i].copy()
+                mutant = self.mutation(i)
+                candidat = self.croisement(cible, mutant)
+
+                self.selection(i, candidat)
+            self.update_best()
+            historique.append((iteration, self.best_score))
+
+            if abs(self.best_score - ancien_best_score) < 1e-6:
+                compteur_sans_amelioration += 1
+            else:
+                compteur_sans_amelioration = 0
+            if compteur_sans_amelioration >= self.min_iter:
+                break
+        return self.best_solution, self.best_score, historique
