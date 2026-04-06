@@ -1,4 +1,5 @@
 import numpy as np
+from Particle_Swarm_Optimization import pso
 
 def fonction_objectives(valeurs_in):
     x1,x2,x3 = valeurs_in
@@ -39,8 +40,10 @@ def penaliser_algo(valeurs_in):
     return f + penalite
 
 def main():
+
     pass
 
 
 if __name__ == "__main__":
+    pso_algo = pso(nbr_particules=30, nbr_dim=3, max_iter=100, min_iter=10, bornes=[(78, 102), (33, 45), (27, 45)], fonction_objectives=penaliser_algo)
     main()
