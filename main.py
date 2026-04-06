@@ -1,4 +1,3 @@
-
 import numpy as np
 
 def fonction_objectives(valeurs_in):
@@ -22,7 +21,7 @@ def verification_contraintes(valeurs_in):
         return False
    
 
-def penaliser_algo_2(valeurs_in):
+def penaliser_algo(valeurs_in):
     f = fonction_objectives(valeurs_in)
 
     g1, g2, g3, g4 = contraintes_fonction(valeurs_in)
