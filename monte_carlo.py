@@ -17,8 +17,6 @@ def monte_carlo_de(n_runs):
         resultats.append((run, best_solution, best_score))
         historiques.append((run, historique))
 
-        print(run, "score =", best_score)
-
     return resultats, historiques
 
 def monte_carlo_pso(n_runs):
@@ -35,6 +33,5 @@ def monte_carlo_pso(n_runs):
         resultats.append((run, gbest_position, gbest_score))
         historiques.append((run, historique))
 
-        print(run, "score =", gbest_score)
 
     return resultats, historiques
