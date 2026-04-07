@@ -15,6 +15,8 @@ class de:
 
         self.population = np.array([[np.random.uniform(low, high) for (low, high) in bornes]for _ in range(taille_population)])
 
+        self.compteur_cout_fonction_objective = 0
+
     def gerer_bornes(self, valeurs_in):
         for dim in range(self.nbr_dim):
             min, max = self.bornes[dim]
@@ -41,7 +43,9 @@ class de:
 
     def selection(self, i, candidat):
         result_cible = penaliser_algo(self.population[i])
+        self.compteur_cout_fonction_objective += 1
         result_candidat = penaliser_algo(candidat)
+        self.compteur_cout_fonction_objective += 1
         if result_candidat <= result_cible:
             self.population[i] = candidat
             return result_candidat
@@ -51,6 +55,7 @@ class de:
     def update_best(self):
         for i in range(self.taille_population):
             score = penaliser_algo(self.population[i])
+            self.compteur_cout_fonction_objective += 1
             if score < self.best_score:
                 self.best_score = score
                 self.best_solution = self.population[i].copy()
@@ -85,4 +90,4 @@ class de:
                 compteur_sans_amelioration = 0
             if compteur_sans_amelioration >= self.min_iter:
                 break
-        return self.best_solution, self.best_score, historique
+        return self.best_solution, self.best_score, historique, self.compteur_cout_fonction_objective

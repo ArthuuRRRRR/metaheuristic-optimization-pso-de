@@ -20,23 +20,22 @@ def sauvegarder_csv(nom_fichier, resultats):
         
 
 
-
 def main():
     n_runs = 30
 
     print("Running Monte Carlo for DE...")
-    resultats_de, historiques_de = monte_carlo_de(n_runs)
+    resultats_de, historiques_de, compteur_de = monte_carlo_de(n_runs)
 
     print("\nRunning Monte Carlo for PSO...")
-    resultats_pso, historiques_pso = monte_carlo_pso(n_runs)
+    resultats_pso, historiques_pso, compteur_pso = monte_carlo_pso(n_runs)
 
     print("\nDE Results:")
     for run, solution, score in resultats_de:
-        print(f"Run {run}: Best Solution = {solution}, Best Score = {score}")   
+        print(f"Run {run}: Best Solution = {solution}, Best Score = {score}, Compteur = {compteur_de[run][1]}")   
 
     print("\nPSO Results:")
     for run, solution, score in resultats_pso:
-        print(f"Run {run}: Best Solution = {solution}, Best Score = {score}") 
+        print(f"Run {run}: Best Solution = {solution}, Best Score = {score}, Compteur = {compteur_pso[run][1]}") 
 
     #sauvegarder_csv("historique_de.csv", historiques_de)
     #sauvegarder_csv("historique_pso.csv", historiques_pso)  
@@ -46,6 +45,23 @@ def main():
     df_convergence = pd.concat([df_de, df_pso], ignore_index=True)
 
     tracer_graphe_convergence(df_convergence)
+
+    compteurs_de = [c for _, c in compteur_de]
+    compteurs_pso = [c for _, c in compteur_pso]
+
+    print("\n=== Budget (nombre d'appels à f) ===")
+
+    print("\nDE :")
+    print(f"Moyenne = {np.mean(compteurs_de):.2f}")
+    print(f"Médiane = {np.median(compteurs_de):.2f}")
+    print(f"Min = {np.min(compteurs_de)}")
+    print(f"Max = {np.max(compteurs_de)}")
+
+    print("\nPSO :")
+    print(f"Moyenne = {np.mean(compteurs_pso):.2f}")
+    print(f"Médiane = {np.median(compteurs_pso):.2f}")
+    print(f"Min = {np.min(compteurs_pso)}")
+    print(f"Max = {np.max(compteurs_pso)}")
 
 if __name__ == "__main__":
     main()

@@ -21,6 +21,8 @@ class pso:
         self.w= 0.5
         self.c1 = 1.5
         self.c2 = 1.5
+
+        self.compteur_cout_fonction_objective = 0
     
         
     def update_vitesse(self) :
@@ -50,9 +52,12 @@ class pso:
        
 
     def update_pbest(self) :
+
         
         for i in range(self.nbr_particules):
             score = penaliser_algo(self.positions[i])
+            self.compteur_cout_fonction_objective += 1
+
             if score < self.pbest_scores[i]:
                 self.pbest_scores[i] = score
                 self.pbest_positions[i] = self.positions[i].copy()
@@ -67,6 +72,7 @@ class pso:
     def run(self) :
         self.update_pbest()
         self.update_gbest()
+        
 
         ancienne_gbest_score = self.gbest_score
         compteur = 0
@@ -85,4 +91,4 @@ class pso:
                 ancienne_gbest_score = self.gbest_score
             if compteur >= self.min_iter and compteur >= 10:
                 break
-        return self.gbest_position, self.gbest_score, historique
+        return self.gbest_position, self.gbest_score, historique , self.compteur_cout_fonction_objective
