@@ -22,10 +22,11 @@ def sauvegarder_csv(nom_fichier, resultats):
 
 def main():
     n_runs = 30
+    seed = 42
 
-    resultats_de, historiques_de, compteur_de = monte_carlo_de(n_runs)
+    resultats_de, historiques_de, compteur_de = monte_carlo_de(n_runs, seed_base = seed)
 
-    resultats_pso, historiques_pso, compteur_pso = monte_carlo_pso(n_runs)
+    resultats_pso, historiques_pso, compteur_pso = monte_carlo_pso(n_runs, seed_base = seed)
     """
 
     print("\nDE Results:")
@@ -44,10 +45,10 @@ def main():
     df_convergence = pd.concat([df_de, df_pso], ignore_index=True)
 
     tracer_graphe_convergence(df_convergence)
-
+    """
     compteurs_de = [c for _, c in compteur_de]
     compteurs_pso = [c for _, c in compteur_pso]
-
+    
     print("\n=== Budget (nombre d'appels à f) ===")
 
     print("\nDE :")
@@ -60,11 +61,12 @@ def main():
     print(f"Moyenne = {np.mean(compteurs_pso):.2f}")
     print(f"Médiane = {np.median(compteurs_pso):.2f}")
     print(f"Min = {np.min(compteurs_pso)}")
-    print(f"Max = {np.max(compteurs_pso)}")
+    print(f"Max = {np.max(compteurs_pso)}") """
+    
 
     tracer_violin(resultats_de, "DE test", resultats_pso, "PSO test")
 
-    df_comparatif = tableau_comparatif(resultats_de, resultats_pso)
+    df_comparatif = tableau_comparatif(resultats_de, "DE test", resultats_pso, "PSO test")
     print("\n=== Tableau Comparatif ===")
     print(df_comparatif)
 

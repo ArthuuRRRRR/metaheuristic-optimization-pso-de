@@ -25,15 +25,16 @@ class pso:
         self.compteur_cout_fonction_objective = 0
     
         
-    def update_vitesse(self) :
+    def update_vitesse(self):
         for i in range(self.nbr_particules):
             r1 = np.random.rand(self.nbr_dim)
             r2 = np.random.rand(self.nbr_dim)
+            voisin = self.meilleure_voisin(i)
 
             for dim in range(self.nbr_dim):
                 inertie = self.w * self.vitesses[i][dim]
                 cognitive = self.c1 * r1[dim] * (self.pbest_positions[i][dim] - self.positions[i][dim])
-                social = self.c2 * r2[dim] * (self.gbest_position[dim] - self.positions[i][dim])
+                social = self.c2 * r2[dim] * (voisin[dim] - self.positions[i][dim])
                 self.vitesses[i][dim] = inertie + cognitive + social
             
 
@@ -43,17 +44,17 @@ class pso:
             for dim in range(self.nbr_dim):
                 self.positions[i][dim] += self.vitesses[i][dim]
 
-                min, max = self.bornes[dim]
+                bornes_min, bornes_max = self.bornes[dim]
 
-                if self.positions[i][dim] < min:
-                    self.positions[i][dim] = min
-                elif self.positions[i][dim] > max:
-                    self.positions[i][dim] = max
+                if self.positions[i][dim] < bornes_min:
+                    self.positions[i][dim] = bornes_min
+                    self.vitesses[i][dim]  *= -1
+                elif self.positions[i][dim] > bornes_max:
+                    self.positions[i][dim] = bornes_max
+                    self.vitesses[i][dim]  *= -1
        
 
     def update_pbest(self) :
-
-        
         for i in range(self.nbr_particules):
             score = penaliser_algo(self.positions[i])
             self.compteur_cout_fonction_objective += 1
@@ -68,6 +69,27 @@ class pso:
                 self.gbest_score = self.pbest_scores[i]
                 self.gbest_position = self.pbest_positions[i].copy()
 
+
+    def meilleure_voisin(self, indx):
+        voisinage = []
+
+        if indx > 0:
+            voisinage.append(indx - 1)
+
+        voisinage.append(indx)
+
+        if indx < self.nbr_particules - 1:
+            voisinage.append(indx + 1)
+
+        meilleur_score = np.inf
+        meilleur_voisin = None
+
+        for j in voisinage:
+            if self.pbest_scores[j] < meilleur_score:
+                meilleur_score = self.pbest_scores[j]
+                meilleur_voisin = self.pbest_positions[j].copy()
+
+        return meilleur_voisin
 
     def run(self) :
         self.update_pbest()
