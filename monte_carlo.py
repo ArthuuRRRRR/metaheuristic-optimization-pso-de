@@ -3,7 +3,7 @@ from Particle_Swarm_Optimization import pso
 from Differential_Evolution import de
 
 
-def monte_carlo_de(n_runs,taille_population,nbr_dim,max_iter,min_iter, seed_base=None):
+def monte_carlo_de(n_runs,taille_population,nbr_dim,max_iter,min_iter,facteur_diff,taux_croisement,seed_base=None):
     resultats = []
     historiques = []
     compteur =[]
@@ -12,7 +12,7 @@ def monte_carlo_de(n_runs,taille_population,nbr_dim,max_iter,min_iter, seed_base
         if seed_base is not None:
             np.random.seed(seed_base + run)
 
-        de_algo = de(taille_population=taille_population,nbr_dim=nbr_dim,max_iter=max_iter,min_iter=min_iter,bornes=[(0.05, 2.00), (0.25, 1.30), (2.00, 15.0)],facteur_diff=0.8,taux_croisement=0.9)
+        de_algo = de(taille_population=taille_population,nbr_dim=nbr_dim,max_iter=max_iter,min_iter=min_iter,bornes=[(0.05, 2.00), (0.25, 1.30), (2.00, 15.0)],facteur_diff=facteur_diff,taux_croisement=taux_croisement)
 
         best_solution, best_score, historique, compteur_cout_fonction_objective = de_algo.run()
 

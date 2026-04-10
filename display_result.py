@@ -85,13 +85,6 @@ def tableau_comparatif(resultats_de, nom_algo_1, resultats_pso, nom_algo_2):
         q3 = np.quantile(scores, 0.75)
         iqr = q3 - q1
 
-        nb_faisables = 0
-        for _, solution, _ in resultats:
-            if verification_contraintes(solution):
-                nb_faisables += 1
-
-        proportion_faisable = nb_faisables / nb_runs if nb_runs > 0 else 0.0
-
         lignes.append({
             "Algorithme": nom_algo,
             "Nb runs": nb_runs,
@@ -103,8 +96,6 @@ def tableau_comparatif(resultats_de, nom_algo_1, resultats_pso, nom_algo_2):
             "Q1": q1,
             "Q3": q3,
             "IQR": iqr,
-            "Runs faisables": nb_faisables,
-            "Proportion faisable": proportion_faisable
         })
 
     df = pd.DataFrame(lignes)

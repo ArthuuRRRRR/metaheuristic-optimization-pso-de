@@ -44,60 +44,7 @@ def construire_parser():
     return parser
 
 
-
-def main():
-    parser = construire_parser()
-
-    args = parser.parse_args()
-
-    if args.algo in ["de", "both"]:
-        resultats_de, historiques_de, compteur_de = monte_carlo_de(n_runs=args.runs,seed_base=args.seed,taille_population=args.population,max_iter=args.max_iter,min_iter=args.min_iter, facteur_diff=args.facteur_diff,taux_croisement=args.taux_croisement)
-        df_de = historiques_vers_dataframe(historiques_de, "DE")
-        tracer_graphe_convergence(df_de)
-    if args.algo in ["pso", "both"]:
-        resultats_pso, historiques_pso, compteur_pso = monte_carlo_pso(n_runs=args.runs,seed_base=args.seed,nbr_particules=args.population,nbr_dim=3,max_iter=args.max_iter,min_iter=args.min_iter)
-        df_pso = historiques_vers_dataframe(historiques_pso, "PSO")
-        tracer_graphe_convergence(df_pso)
-
-    if args.algo == "both":
-        df = tableau_comparatif(resultats_de, "DE", resultats_pso, "PSO")
-        print("\n=== Tableau Comparatif ===")
-        print(df)
-        tracer_violin(resultats_de, "DE", resultats_pso, "PSO")
-
-
-
-
-
-    n_runs = 30
-    seed = 42
-    """
-    
-    resultats_de, historiques_de, compteur_de = monte_carlo_de(n_runs, taille_population=seed, seed_base=seed)
-
-    resultats_pso, historiques_pso, compteur_pso = monte_carlo_pso(n_runs, seed_base = seed)"""
-    """
-
-    print("\nDE Results:")
-    for run, solution, score in resultats_de:
-        print(f"Run {run}: Best Solution = {solution}, Best Score = {score}, Compteur = {compteur_de[run][1]}")   
-
-    print("\nPSO Results:")
-    for run, solution, score in resultats_pso:
-        print(f"Run {run}: Best Solution = {solution}, Best Score = {score}, Compteur = {compteur_pso[run][1]}") """
-
-    #sauvegarder_csv("historique_de.csv", historiques_de)
-    #sauvegarder_csv("historique_pso.csv", historiques_pso)  
-    df_de = historiques_vers_dataframe(historiques_de, "DE")
-    df_pso = historiques_vers_dataframe(historiques_pso, "PSO")
-
-    df_convergence = pd.concat([df_de, df_pso], ignore_index=True)
-
-    tracer_graphe_convergence(df_convergence)
-    """
-    compteurs_de = [c for _, c in compteur_de]
-    compteurs_pso = [c for _, c in compteur_pso]
-    
+def afficher_budget(compteurs_de, compteurs_pso):
     print("\n=== Budget (nombre d'appels à f) ===")
 
     print("\nDE :")
@@ -110,14 +57,84 @@ def main():
     print(f"Moyenne = {np.mean(compteurs_pso):.2f}")
     print(f"Médiane = {np.median(compteurs_pso):.2f}")
     print(f"Min = {np.min(compteurs_pso)}")
-    print(f"Max = {np.max(compteurs_pso)}") """
+    print(f"Max = {np.max(compteurs_pso)}")
+
+
+def menu():
+    print("=== TP3 - Expériences PSO / DE ===")
+    print("1. Analyse PSO")
+    print("2. Analyse DE")
+    print("3. Exécuter les deux et comparer")
+    print("4. Quitter")
+
+    choix = input("Entrez votre choix (1-4) : ")
+
+    if choix == "1":
+        print("Analyse taille de l'essaim PSO")
+        resultats_pso_nbr_particule_1, historiques_pso_nbr_particule_1, compteur_pso_1 = monte_carlo_pso(n_runs=30, seed_base=42,nbr_particules=30,nbr_dim=3,max_iter=100,min_iter=10)
+        resultats_pso_nbr_particules_2, historiques_pso_nbr_particules_2, compteur_pso_2 = monte_carlo_pso(n_runs=30, seed_base=42,nbr_particules=60,nbr_dim=3,max_iter=100,min_iter=10)
+        df_pso_nbr_particule_1 = historiques_vers_dataframe(historiques_pso_nbr_particule_1, "PSO - 30 particules")
+        df_pso_nbr_particule_2 = historiques_vers_dataframe(historiques_pso_nbr_particules_2, "PSO - 60 particules")
+        df_convergence_pso = pd.concat([df_pso_nbr_particule_1, df_pso_nbr_particule_2], ignore_index=True)
+        tracer_graphe_convergence(df_convergence_pso)
+        tracer_violin(resultats_pso_nbr_particule_1, "PSO - 30 particules", resultats_pso_nbr_particules_2, "PSO - 60 particules")
+
+    if choix == "2":
+        print("Analyse taille de la population DE")
+        resultats_de_taille_population_1, historiques_de_taille_population_1, compteur_de_1 = monte_carlo_de(n_runs=30,taille_population=30,nbr_dim=3,max_iter=100,min_iter=10,facteur_diff=0.8,taux_croisement=0.9,seed_base=42)
+        resultats_de_taille_population_2, historiques_de_taille_population_2, compteur_de_2 = monte_carlo_de(n_runs=30,taille_population=60,nbr_dim=3,max_iter=100,min_iter=10,facteur_diff=0.8,taux_croisement=0.9,seed_base=42)
+        df_de_taille_population_1 = historiques_vers_dataframe(historiques_de_taille_population_1, "DE - 30 individus")
+        df_de_taille_population_2 = historiques_vers_dataframe(historiques_de_taille_population_2, "DE - 60 individus")
+        df_convergence_de = pd.concat([df_de_taille_population_1, df_de_taille_population_2], ignore_index=True)
+        tracer_graphe_convergence(df_convergence_de)
+        tracer_violin(resultats_de_taille_population_1, "DE - 30 individus", resultats_de_taille_population_2, "DE - 60 individus")
+    
+    if choix == "3":
+        print("Comparaison PSO vs DE")
+        resultats_de, historiques_de, compteur_de = monte_carlo_de(n_runs=30,taille_population=30,nbr_dim=3,max_iter=100,min_iter=10,facteur_diff=0.8,taux_croisement=0.9,seed_base=42)
+        resultats_pso, historiques_pso, compteur_pso = monte_carlo_pso(n_runs=30, seed_base=42,nbr_particules=30,nbr_dim=3,max_iter=100,min_iter=10)
+        df_de = historiques_vers_dataframe(historiques_de, "DE")
+        df_pso = historiques_vers_dataframe(historiques_pso, "PSO")
+        df_convergence = pd.concat([df_de, df_pso], ignore_index=True)
+        tracer_graphe_convergence(df_convergence)
+        tracer_violin(resultats_de, "DE", resultats_pso, "PSO")
+        df_comparatif = tableau_comparatif(resultats_de, "DE", resultats_pso, "PSO")
+        print("\n=== Tableau Comparatif ===")
+        print(df_comparatif)
+
+        compteurs_de = [c for _, c in compteur_de]
+        compteurs_pso = [c for _, c in compteur_pso]
+        
+        afficher_budget(compteurs_de, compteurs_pso)
+    
+    if choix == "4":
+        print("Au revoir!")
+        exit()
     
 
-    tracer_violin(resultats_de, "DE test", resultats_pso, "PSO test")
 
-    df_comparatif = tableau_comparatif(resultats_de, "DE test", resultats_pso, "PSO test")
-    print("\n=== Tableau Comparatif ===")
-    print(df_comparatif)
+def main():
+    parser = construire_parser()
+
+    args = parser.parse_args()
+
+    if args.algo in ["de", "both"]:
+        resultats_de, historiques_de, compteur_de = monte_carlo_de(n_runs=args.runs,taille_population=args.population,nbr_dim=3,max_iter=args.max_iter,min_iter=args.min_iter, facteur_diff=args.facteur_diff,taux_croisement=args.taux_croisement,seed_base=args.seed)
+        df_de = historiques_vers_dataframe(historiques_de, "DE")
+        tracer_graphe_convergence(df_de)
+    if args.algo in ["pso", "both"]:
+        resultats_pso, historiques_pso, compteur_pso = monte_carlo_pso(n_runs=args.runs,seed_base=args.seed,nbr_particules=args.population,nbr_dim=3,max_iter=args.max_iter,min_iter=args.min_iter)
+        df_pso = historiques_vers_dataframe(historiques_pso, "PSO")
+        tracer_graphe_convergence(df_pso)
+
+    if args.algo == "both":
+        df = tableau_comparatif(resultats_de, "DE", resultats_pso, "PSO")
+        print("\n=== Tableau Comparatif ===")
+        print(df)
+        tracer_violin(resultats_de, "DE", resultats_pso, "PSO")
+    
+    menu()
+
 
 if __name__ == "__main__":
     main()
