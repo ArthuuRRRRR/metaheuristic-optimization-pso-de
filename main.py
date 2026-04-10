@@ -1,3 +1,5 @@
+import argparse
+
 import numpy as np
 from Particle_Swarm_Optimization import pso
 from Differential_Evolution import de
@@ -20,13 +22,60 @@ def sauvegarder_csv(nom_fichier, resultats):
         
 
 
+def construire_parser():
+    parser = argparse.ArgumentParser(description="TP3 - Exécution des expériences PSO / DE")
+
+    parser.add_argument("--algo",type=str,choices=["pso", "de", "both"],default="both",help="Algorithme à exécuter")
+
+    parser.add_argument("--runs",type=int,default=30,help="Nombre de runs Monte-Carlo")
+
+    parser.add_argument("--seed",type=int,default=42,help="Seed de base")
+
+    parser.add_argument("--population",type=int,default=30,help="Taille de la population pour DE et nombre de particules pour PSO")
+
+    parser.add_argument("--max_iter",type=int,default=100,help="Nombre maximum d'itérations pour DE et PSO")
+
+    parser.add_argument("--min_iter",type=int,default=10,help="Nombre minimum d'itérations pour DE et PSO")
+
+    parser.add_argument("--facteur_diff",type=float,default=0.8,help="Facteur de différenciation pour DE")
+
+    parser.add_argument("--taux_croisement",type=float,default=0.9,help="Taux de croisement pour DE")
+
+    return parser
+
+
+
 def main():
+    parser = construire_parser()
+
+    args = parser.parse_args()
+
+    if args.algo in ["de", "both"]:
+        resultats_de, historiques_de, compteur_de = monte_carlo_de(n_runs=args.runs,seed_base=args.seed,taille_population=args.population,max_iter=args.max_iter,min_iter=args.min_iter, facteur_diff=args.facteur_diff,taux_croisement=args.taux_croisement)
+        df_de = historiques_vers_dataframe(historiques_de, "DE")
+        tracer_graphe_convergence(df_de)
+    if args.algo in ["pso", "both"]:
+        resultats_pso, historiques_pso, compteur_pso = monte_carlo_pso(n_runs=args.runs,seed_base=args.seed,nbr_particules=args.population,nbr_dim=3,max_iter=args.max_iter,min_iter=args.min_iter)
+        df_pso = historiques_vers_dataframe(historiques_pso, "PSO")
+        tracer_graphe_convergence(df_pso)
+
+    if args.algo == "both":
+        df = tableau_comparatif(resultats_de, "DE", resultats_pso, "PSO")
+        print("\n=== Tableau Comparatif ===")
+        print(df)
+        tracer_violin(resultats_de, "DE", resultats_pso, "PSO")
+
+
+
+
+
     n_runs = 30
     seed = 42
+    """
+    
+    resultats_de, historiques_de, compteur_de = monte_carlo_de(n_runs, taille_population=seed, seed_base=seed)
 
-    resultats_de, historiques_de, compteur_de = monte_carlo_de(n_runs, seed_base = seed)
-
-    resultats_pso, historiques_pso, compteur_pso = monte_carlo_pso(n_runs, seed_base = seed)
+    resultats_pso, historiques_pso, compteur_pso = monte_carlo_pso(n_runs, seed_base = seed)"""
     """
 
     print("\nDE Results:")
