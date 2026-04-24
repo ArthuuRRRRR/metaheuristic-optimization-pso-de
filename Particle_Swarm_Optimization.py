@@ -104,7 +104,7 @@ class pso:
             self.update_position()
             self.update_pbest()
             self.update_gbest()
-            historique.append((iter, self.gbest_score))
+            historique.append((iter,self.compteur_cout_fonction_objective, self.gbest_score))
 
             if abs(self.gbest_score - ancienne_gbest_score) < 1e-6:
                 compteur += 1

@@ -4,7 +4,7 @@ import numpy as np
 from Particle_Swarm_Optimization import pso
 from Differential_Evolution import de
 from monte_carlo import monte_carlo_pso, monte_carlo_de
-from display_result import historiques_vers_dataframe, tracer_graphe_convergence, tracer_violin, tableau_comparatif
+from display_result import historiques_vers_dataframe, tracer_graphe_convergence, tracer_violin, tableau_comparatif, tracer_graphe_convergence_budget
 
 import pandas as pd
 
@@ -40,6 +40,8 @@ def construire_parser():
     parser.add_argument("--facteur_diff",type=float,default=0.8,help="Facteur de différenciation pour DE")
 
     parser.add_argument("--taux_croisement",type=float,default=0.9,help="Taux de croisement pour DE")
+
+    parser.add_argument("--menu",action="store_true",help="Afficher le menu interactif")
 
     return parser
 
@@ -106,6 +108,8 @@ def menu():
         compteurs_pso = [c for _, c in compteur_pso]
         
         afficher_budget(compteurs_de, compteurs_pso)
+
+        tracer_graphe_convergence_budget(df_convergence)
     
     if choix == "4":
         print("Au revoir!")
@@ -118,22 +122,26 @@ def main():
 
     args = parser.parse_args()
 
-    if args.algo in ["de", "both"]:
+    if args.menu:
+        menu()
+        return 
+    elif args.algo in ["de", "both"]:
         resultats_de, historiques_de, compteur_de = monte_carlo_de(n_runs=args.runs,taille_population=args.population,nbr_dim=3,max_iter=args.max_iter,min_iter=args.min_iter, facteur_diff=args.facteur_diff,taux_croisement=args.taux_croisement,seed_base=args.seed)
         df_de = historiques_vers_dataframe(historiques_de, "DE")
         tracer_graphe_convergence(df_de)
+        tracer_graphe_convergence_budget(df_de)
     if args.algo in ["pso", "both"]:
         resultats_pso, historiques_pso, compteur_pso = monte_carlo_pso(n_runs=args.runs,seed_base=args.seed,nbr_particules=args.population,nbr_dim=3,max_iter=args.max_iter,min_iter=args.min_iter)
         df_pso = historiques_vers_dataframe(historiques_pso, "PSO")
         tracer_graphe_convergence(df_pso)
+        tracer_graphe_convergence_budget(df_pso)
 
     if args.algo == "both":
         df = tableau_comparatif(resultats_de, "DE", resultats_pso, "PSO")
         print("\n=== Tableau Comparatif ===")
         print(df)
         tracer_violin(resultats_de, "DE", resultats_pso, "PSO")
-    
-    menu()
+        tracer_graphe_convergence_budget(df)
 
 
 if __name__ == "__main__":

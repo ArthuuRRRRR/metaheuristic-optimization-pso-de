@@ -9,13 +9,19 @@ def historiques_vers_dataframe(historiques, nom_algo):
 
     for run, historique in historiques:
         for item in historique:
-            if isinstance(item, tuple) and len(item) == 2:
-                iteration, cout = item
+            if len(item) == 3:
+                iteration, budget, cout = item
             else:
-                iteration = len([x for x in lignes if x["run"] == run and x["algo"] == nom_algo])
-                cout = item
+                iteration, cout = item
+                budget = iteration
 
-            lignes.append({"run": run,"algo": nom_algo,"iteration": iteration,"cout": cout})
+            lignes.append({
+                "run": run,
+                "algo": nom_algo,
+                "iteration": iteration,
+                "budget": budget,
+                "cout": cout
+            })
 
     return pd.DataFrame(lignes)
 
@@ -85,6 +91,14 @@ def tableau_comparatif(resultats_de, nom_algo_1, resultats_pso, nom_algo_2):
         q3 = np.quantile(scores, 0.75)
         iqr = q3 - q1
 
+
+        nb_faisables = 0
+        for _, solution, _ in resultats:
+            if verification_contraintes(solution):
+                nb_faisables += 1
+
+        proportion_faisable = nb_faisables / nb_runs if nb_runs > 0 else 0.0
+
         lignes.append({
             "Algorithme": nom_algo,
             "Nb runs": nb_runs,
@@ -96,8 +110,34 @@ def tableau_comparatif(resultats_de, nom_algo_1, resultats_pso, nom_algo_2):
             "Q1": q1,
             "Q3": q3,
             "IQR": iqr,
+            "Proportion faisable": proportion_faisable
         })
 
     df = pd.DataFrame(lignes)
 
     return df
+
+
+def tracer_graphe_convergence_budget(df):
+    plt.figure(figsize=(10, 6))
+
+    for algo in df["algo"].unique():
+        df_algo = df[df["algo"] == algo]
+
+        stats = df_algo.groupby("budget")["cout"].agg(
+            median="median",
+            q1=lambda x: x.quantile(0.25),
+            q3=lambda x: x.quantile(0.75)
+        ).reset_index()
+
+        plt.plot(stats["budget"], stats["median"], label=f"{algo} médiane")
+        plt.fill_between(stats["budget"], stats["q1"], stats["q3"], alpha=0.2)
+
+    plt.xlabel("Budget : nombre d'appels à la fonction objectif")
+    plt.ylabel("Coût pénalisé")
+    plt.yscale("log")
+    plt.title("Profil de convergence en fonction du budget")
+    plt.legend()
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()

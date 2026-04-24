@@ -82,7 +82,7 @@ class de:
 
                 self.selection(i, candidat)
             self.update_best()
-            historique.append((iteration, self.best_score))
+            historique.append((iteration, self.compteur_cout_fonction_objective, self.best_score))
 
             if abs(self.best_score - ancien_best_score) < 1e-6:
                 compteur_sans_amelioration += 1
