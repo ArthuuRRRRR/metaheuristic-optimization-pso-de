@@ -19,6 +19,7 @@ def sauvegarder_csv(nom_fichier, resultats):
         for run, solution, score in resultats:
             x1, x2, x3 = solution
             writer.writerow([run, x1, x2, x3, score])
+    print(f"Résultats sauvegardés")
         
 
 
@@ -42,6 +43,8 @@ def construire_parser():
     parser.add_argument("--taux_croisement",type=float,default=0.9,help="Taux de croisement pour DE")
 
     parser.add_argument("--menu",action="store_true",help="Afficher le menu interactif")
+
+    parser.add_argument("--save", action="store_true", help="Sauvegarder les résultats en CSV")
 
     return parser
 
@@ -92,7 +95,7 @@ def menu():
         tracer_violin(resultats_de_taille_population_1, "DE - 30 individus", resultats_de_taille_population_2, "DE - 60 individus")
     
     if choix == "3":
-        print("Comparaison PSO vs DE")
+        print("Comparaison PSO vs DE avec budget et sauvegarde resultats")
         resultats_de, historiques_de, compteur_de = monte_carlo_de(n_runs=30,taille_population=30,nbr_dim=3,max_iter=100,min_iter=10,facteur_diff=0.8,taux_croisement=0.9,seed_base=42)
         resultats_pso, historiques_pso, compteur_pso = monte_carlo_pso(n_runs=30, seed_base=42,nbr_particules=30,nbr_dim=3,max_iter=100,min_iter=10)
         df_de = historiques_vers_dataframe(historiques_de, "DE")
@@ -110,6 +113,9 @@ def menu():
         afficher_budget(compteurs_de, compteurs_pso)
 
         tracer_graphe_convergence_budget(df_convergence)
+
+        sauvegarder_csv("resultats_de.csv", resultats_de)
+        sauvegarder_csv("resultats_pso.csv", resultats_pso)
     
     if choix == "4":
         print("Au revoir!")
@@ -141,7 +147,9 @@ def main():
         print("\n=== Tableau Comparatif ===")
         print(df)
         tracer_violin(resultats_de, "DE", resultats_pso, "PSO")
-        tracer_graphe_convergence_budget(df)
+        if args.save:
+            sauvegarder_csv("resultats_de.csv", resultats_de)
+            sauvegarder_csv("resultats_pso.csv", resultats_pso)
 
 
 if __name__ == "__main__":
