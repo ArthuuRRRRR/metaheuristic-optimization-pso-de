@@ -15,7 +15,7 @@ Le problème traité est un problème contraint de conception de ressort mécani
 ### 1. Cloner le projet
 
 ```bash
-git clone https://github.com/ArthuuRRRRR/metaheuristic-optimization-pso-de
+git clone https://github.com/ArthuuRRRRR/metaheuristic-optimization-pso-de.git
 cd metaheuristic-optimization-pso-de
 ```
 

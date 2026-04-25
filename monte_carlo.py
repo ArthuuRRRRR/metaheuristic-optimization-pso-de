@@ -2,7 +2,7 @@ import numpy as np
 from Particle_Swarm_Optimization import pso
 from Differential_Evolution import de
 
-
+# Monte-Carlo pour DE et PSO
 def monte_carlo_de(n_runs,taille_population,nbr_dim,max_iter,min_iter,facteur_diff,taux_croisement,seed_base=None):
     resultats = []
     historiques = []
@@ -28,7 +28,7 @@ def monte_carlo_pso(n_runs,nbr_particules,nbr_dim,max_iter,min_iter, seed_base=N
     compteur =[]
     for run in range(n_runs):
         if seed_base is not None:
-            np.random.seed(seed_base + run)
+            np.random.seed(seed_base + run) # rajout seed pour reproductibilité
 
         pso_algo = pso(nbr_particules=nbr_particules, nbr_dim=nbr_dim, max_iter=max_iter, min_iter=min_iter, bornes=[(0.05, 2.00), (0.25, 1.30), (2.00, 15.0)])
 
@@ -38,4 +38,4 @@ def monte_carlo_pso(n_runs,nbr_particules,nbr_dim,max_iter,min_iter, seed_base=N
         historiques.append((run, historique))
         compteur.append((run, compteur_cout_fonction_objective))
 
-    return resultats, historiques, compteur
+    return resultats, historiques, compteur 

@@ -69,7 +69,7 @@ def menu(): # Menu interactif pour choisir les analyses à faire
     print("=== TP3 - Expériences PSO / DE ===")
     print("1. Analyse PSO")
     print("2. Analyse DE")
-    print("3. Exécuter les deux et comparer")
+    print("3. Exécuter les deux et comparer, une sauvegarde csv sera faites")
     print("4. Quitter")
 
     choix = input("Entrez votre choix (1-4) : ")
