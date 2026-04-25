@@ -91,7 +91,7 @@ class pso:
 
         return meilleur_voisin
 
-    def run(self) :
+    def run(self) : # Boucle principale de PSO
         self.update_pbest()
         self.update_gbest()
         

@@ -10,7 +10,7 @@ import pandas as pd
 
 import csv
 
-def sauvegarder_csv(nom_fichier, resultats):
+def sauvegarder_csv(nom_fichier, resultats): #fonction sauvegarde
     with open(nom_fichier, mode='w', newline='') as fichier:
         writer = csv.writer(fichier)
 
@@ -23,7 +23,7 @@ def sauvegarder_csv(nom_fichier, resultats):
         
 
 
-def construire_parser():
+def construire_parser(): # Pour avoir les commandes d execution
     parser = argparse.ArgumentParser(description="TP3 - Exécution des expériences PSO / DE")
 
     parser.add_argument("--algo",type=str,choices=["pso", "de", "both"],default="both",help="Algorithme à exécuter")
@@ -49,7 +49,7 @@ def construire_parser():
     return parser
 
 
-def afficher_budget(compteurs_de, compteurs_pso):
+def afficher_budget(compteurs_de, compteurs_pso): # budget
     print("\n=== Budget (nombre d'appels à f) ===")
 
     print("\nDE :")
@@ -65,7 +65,7 @@ def afficher_budget(compteurs_de, compteurs_pso):
     print(f"Max = {np.max(compteurs_pso)}")
 
 
-def menu():
+def menu(): # Menu interactif pour choisir les analyses à faire
     print("=== TP3 - Expériences PSO / DE ===")
     print("1. Analyse PSO")
     print("2. Analyse DE")

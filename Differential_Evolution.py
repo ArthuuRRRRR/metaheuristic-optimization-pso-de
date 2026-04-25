@@ -70,7 +70,7 @@ class de:
         return candidat
         
 
-    def run(self) :
+    def run(self) : # Boucle principale de DE
         compteur_sans_amelioration = 0
         historique = []
         for iteration in range(self.max_iter):

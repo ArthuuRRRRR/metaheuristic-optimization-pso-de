@@ -4,7 +4,7 @@ import numpy as np
 from fitness_function import verification_contraintes
 
 
-def historiques_vers_dataframe(historiques, nom_algo):
+def historiques_vers_dataframe(historiques, nom_algo): #Convertion historique en dataframe pour les analyses
     lignes = []
 
     for run, historique in historiques:
@@ -26,7 +26,7 @@ def historiques_vers_dataframe(historiques, nom_algo):
     return pd.DataFrame(lignes)
 
 
-def tracer_graphe_convergence(df):
+def tracer_graphe_convergence(df): # en fonction de l iteration
     plt.figure(figsize=(10, 6))
 
     for algo in df["algo"].unique():
@@ -46,7 +46,7 @@ def tracer_graphe_convergence(df):
     plt.tight_layout()
     plt.show()
 
-def tracer_violin(resultats_de,nom_algo_1,resultats_pso, nom_algo_2):
+def tracer_violin(resultats_de,nom_algo_1,resultats_pso, nom_algo_2): # Tracer d'un graphique violin pour comparer les distributions des résultats
     data = []
 
     for _, _, score in resultats_de:
@@ -70,7 +70,7 @@ def tracer_violin(resultats_de,nom_algo_1,resultats_pso, nom_algo_2):
     plt.show()
 
 
-def tableau_comparatif(resultats_de, nom_algo_1, resultats_pso, nom_algo_2):
+def tableau_comparatif(resultats_de, nom_algo_1, resultats_pso, nom_algo_2): # Apperçu statistique des résultats 
     lignes = []
 
     algorithmes = {
@@ -118,7 +118,7 @@ def tableau_comparatif(resultats_de, nom_algo_1, resultats_pso, nom_algo_2):
     return df
 
 
-def tracer_graphe_convergence_budget(df):
+def tracer_graphe_convergence_budget(df): # en fonction du budget (nombre d'appels à la fonction objectif)
     plt.figure(figsize=(10, 6))
 
     for algo in df["algo"].unique():
