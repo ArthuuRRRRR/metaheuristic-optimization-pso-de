@@ -25,7 +25,7 @@ class pso:
         self.compteur_cout_fonction_objective = 0
     
         
-    def update_vitesse(self):
+    def update_vitesse(self): # Calcul de la nouvelle vitesse pour chaque particule
         for i in range(self.nbr_particules):
             r1 = np.random.rand(self.nbr_dim)
             r2 = np.random.rand(self.nbr_dim)
@@ -39,7 +39,7 @@ class pso:
             
 
 
-    def update_position(self) :
+    def update_position(self) : # MAJ position de chaque particule en fonction de vitesse , bornes du problème
         for i in range(self.nbr_particules):
             for dim in range(self.nbr_dim):
                 self.positions[i][dim] += self.vitesses[i][dim]
@@ -54,7 +54,7 @@ class pso:
                     self.vitesses[i][dim]  *= -1
        
 
-    def update_pbest(self) :
+    def update_pbest(self) : # MAJ du meilleur position pour chaque particule
         for i in range(self.nbr_particules):
             score = penaliser_algo(self.positions[i])
             self.compteur_cout_fonction_objective += 1
@@ -63,14 +63,14 @@ class pso:
                 self.pbest_scores[i] = score
                 self.pbest_positions[i] = self.positions[i].copy()
 
-    def update_gbest(self) :
+    def update_gbest(self) : # MAJ du meilleur position global par rapport à tous les pbest
         for i in range(self.nbr_particules):
             if self.pbest_scores[i] < self.gbest_score:
                 self.gbest_score = self.pbest_scores[i]
                 self.gbest_position = self.pbest_positions[i].copy()
 
 
-    def meilleure_voisin(self, indx):
+    def meilleure_voisin(self, indx): # Trouver le meilleur voisin en fonction de la position  particule et voisins 
         voisinage = []
 
         if indx > 0:

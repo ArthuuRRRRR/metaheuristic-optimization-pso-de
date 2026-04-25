@@ -17,7 +17,7 @@ class de:
 
         self.compteur_cout_fonction_objective = 0
 
-    def gerer_bornes(self, valeurs_in):
+    def gerer_bornes(self, valeurs_in): # Check des bornes
         for dim in range(self.nbr_dim):
             min, max = self.bornes[dim]
             if valeurs_in[dim] < min:
@@ -26,7 +26,7 @@ class de:
                 valeurs_in[dim] = max
         return valeurs_in
     
-    def mutation(self, idx):
+    def mutation(self, idx): # Mutation genere 3 vecteurs randoms et calcule nouv vecteur mutant 
         indices = list(range(self.taille_population))
         indices.remove(idx)
 
@@ -41,7 +41,7 @@ class de:
 
         return vect_mutant_borne
 
-    def selection(self, i, candidat):
+    def selection(self, i, candidat): # Compare candidat et vecteur cible et garde best
         result_cible = penaliser_algo(self.population[i])
         self.compteur_cout_fonction_objective += 1
         result_candidat = penaliser_algo(candidat)
@@ -52,7 +52,7 @@ class de:
         else:
             return result_cible
 
-    def update_best(self):
+    def update_best(self): # MAJ de la meilleure solution et score de la population
         for i in range(self.taille_population):
             score = penaliser_algo(self.population[i])
             self.compteur_cout_fonction_objective += 1
@@ -60,7 +60,7 @@ class de:
                 self.best_score = score
                 self.best_solution = self.population[i].copy()
 
-    def croisement(self, cible, mutant):
+    def croisement(self, cible, mutant): # Croisement de vecteur cible et mutant pour generer un candidat
         candidat = np.copy(cible)
         j_random = np.random.randint(self.nbr_dim)
         for j in range(self.nbr_dim):
